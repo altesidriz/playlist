@@ -1,9 +1,16 @@
+import styled from "styled-components"
+import { Menu } from "./components/Menu"
 
+const Container = styled.div`
+
+`
 
 function App() {
 
   return (
-<h1>Hello</h1>
+    <Container>
+      <Menu />
+    </Container>
   )
 }
 

@@ -20,7 +20,7 @@ import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined
 
 const Container = styled.div`
   flex: 1;
-  background-color: ${({theme}) => theme.bg};
+  background-color: ${({theme}) => theme.bgLighter};
   height: 100vh;
   color:  ${({theme}) => theme.text};
   font-size: 14px;
@@ -71,6 +71,13 @@ align-items: center;
 gap: 5px;
 `;
 
+const Title = styled.h2`
+    font-size14px;
+    font-weight: 500;
+    color: #aaaaaa;
+    margin-bottom: 20px;
+`;
+
 export const Menu = ({
     darkMode,
     setDarkMode
@@ -112,6 +119,7 @@ export const Menu = ({
                     </Button>
                 </Login>
                 <Hr />
+                <Title>Best of VideoTube</Title>
                 <Item>
                     <LibraryMusicOutlinedIcon />
                     Music

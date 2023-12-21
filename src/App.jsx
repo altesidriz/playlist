@@ -12,6 +12,7 @@ const Container = styled.div`
 
 const Main = styled.div`
   flex: 7;
+  background-color: ${({theme}) => theme.bg};
 `;
 const Wrapper = styled.div``;
 

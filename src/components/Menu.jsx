@@ -20,9 +20,9 @@ import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined
 
 const Container = styled.div`
   flex: 1;
-  background-color: ${({theme}) => theme.bgLighter};
-  height: 100vh;
-  color:  ${({theme}) => theme.text};
+  background-color: ${({ theme }) => theme.bgLighter};
+  height: 100%;
+  color:  ${({ theme }) => theme.text};
   font-size: 14px;
   position: sticky;
   top: 0;
@@ -36,7 +36,7 @@ const Logo = styled.div`
     align-items: center;
     gap: 5px;
     font-weight: bold;
-    margin-bottom- 25px;
+    margin-bottom: 25px;
 `;
 
 const Img = styled.img`
@@ -53,7 +53,7 @@ const Item = styled.div`
 
 const Hr = styled.hr`
 margin: 15px 0px;
-border: 0.5px solid  ${({theme}) => theme.soft};
+border: 0.5px solid  ${({ theme }) => theme.soft};
 `;
 
 const Login = styled.div``;
@@ -72,7 +72,7 @@ gap: 5px;
 `;
 
 const Title = styled.h2`
-    font-size14px;
+    font-size: 14px;
     font-weight: 500;
     color: #aaaaaa;
     margin-bottom: 20px;
@@ -157,7 +157,7 @@ export const Menu = ({
                     <HelpOutlineOutlinedIcon />
                     Help
                 </Item>
-                <Item onClick={()=>setDarkMode(!darkMode)}>
+                <Item onClick={() => setDarkMode(!darkMode)}>
                     <SettingsBrightnessOutlinedIcon />
                     Light Mode
                 </Item>

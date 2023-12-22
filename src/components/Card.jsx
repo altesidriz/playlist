@@ -53,7 +53,7 @@ const Card = () => {
                     <ChannelImage src='src\img\d4lg5mo-8589bcd2-ee2d-4d5b-9fdc-0bb84771efa1.png' />
                     <Texts>
                         <Title>Test Video</Title>
-                        <ChannelName>Videoz</ChannelName>
+                        <ChannelName>Hogwartz Videos</ChannelName>
                         <Info>88K views &bull; 1 year ago </Info>
                     </Texts>
                 </Details>

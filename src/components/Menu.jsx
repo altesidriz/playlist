@@ -17,6 +17,7 @@ import OutlinedFlagRoundedIcon from '@mui/icons-material/OutlinedFlagRounded';
 import HelpOutlineOutlinedIcon from '@mui/icons-material/HelpOutlineOutlined';
 import SettingsBrightnessOutlinedIcon from '@mui/icons-material/SettingsBrightnessOutlined';
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
+import { Link } from 'react-router-dom';
 
 const Container = styled.div`
   flex: 1;
@@ -85,10 +86,12 @@ export const Menu = ({
     return (
         <Container>
             <Wrapper>
-                <Logo>
-                    <Img src={logo} />
-                    VideoTube
-                </Logo>
+                <Link to="/" style={{textDecoration: "none", color: "inherit"}}>
+                    <Logo>
+                        <Img src={logo} />
+                        VideoTube
+                    </Logo>
+                </Link>
                 <Item>
                     <HomeOutlinedIcon />
                     Home

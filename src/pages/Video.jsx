@@ -6,6 +6,7 @@ import ThumbDownOutlinedIcon from '@mui/icons-material/ThumbDownOutlined';
 import ReplyOutlinedIcon from '@mui/icons-material/ReplyOutlined';
 import DownloadIcon from '@mui/icons-material/Download';
 import Comments from '../components/Comments';
+import Card from '../components/Card';
 
 
 const Container = styled.div`
@@ -149,7 +150,15 @@ const Video = () => {
         <Hr></Hr>
         <Comments />
       </Content>
-      <Recommendations></Recommendations>
+      <Recommendations>
+        <Card type="sm"/>
+        <Card type="sm"/>
+        <Card type="sm"/>
+        <Card type="sm"/>
+        <Card type="sm"/>
+        <Card type="sm"/>
+        <Card type="sm"/>
+      </Recommendations>
     </Container>
   )
 }

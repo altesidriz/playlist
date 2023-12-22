@@ -5,6 +5,7 @@ import ThumbUpOutlinedIcon from '@mui/icons-material/ThumbUpOutlined';
 import ThumbDownOutlinedIcon from '@mui/icons-material/ThumbDownOutlined';
 import ReplyOutlinedIcon from '@mui/icons-material/ReplyOutlined';
 import DownloadIcon from '@mui/icons-material/Download';
+import Comments from '../components/Comments';
 
 
 const Container = styled.div`
@@ -74,7 +75,6 @@ const Image = styled.img`
 width: 50px;
 height: 50px; 
 border-radius: 50%;
-background-color: #999;
 `;
 const ChannelDetail = styled.div`
   display: flex;
@@ -146,6 +146,8 @@ const Video = () => {
           </ChannelInfo>
           <Subscribe>SUBSCRIBE</Subscribe>
         </Channel>
+        <Hr></Hr>
+        <Comments />
       </Content>
       <Recommendations></Recommendations>
     </Container>

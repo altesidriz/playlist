@@ -50,6 +50,10 @@ const Item = styled.div`
     gap: 20px;
     cursor: pointer;
     padding: 7.5px 0;
+
+    &:hover{
+        background: ${({ theme }) => theme.soft};
+    }
 `;
 
 const Hr = styled.hr`
@@ -116,10 +120,12 @@ export const Menu = ({
                 <Hr />
                 <Login>
                     Sign in to like videos, comment, and subscribe.
+                    <Link to="signin" style={{textDecoration:"none"}}>
                     <Button>
                         <AccountCircleOutlinedIcon />
                         Sign in
                     </Button>
+                    </Link>
                 </Login>
                 <Hr />
                 <Title>Best of VideoTube</Title>

@@ -2,11 +2,12 @@ import React from 'react';
 import styled from 'styled-components';
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
+import { Link } from 'react-router-dom';
 
 const Container = styled.div`
   position: sticky;
   top: 0;
-  background-color: ${({theme}) => theme.bgLighter};
+  background-color: ${({ theme }) => theme.bgLighter};
   height: 56px;
 `;
 const Wrapper = styled.div`
@@ -15,8 +16,7 @@ const Wrapper = styled.div`
   height: 100%;
   padding: 0px 20px;
   justify-content: flex-end;
-  postion: relative;
-
+  position: relative;
 `;
 const Search = styled.div`
   width: 40%;
@@ -34,7 +34,7 @@ const Search = styled.div`
 const Input = styled.input`
   border: none;
   background-color: transparent;
-  color: ${({theme}) => theme.text};
+  color: ${({ theme }) => theme.text};
 
 `;
 
@@ -62,10 +62,12 @@ export const Navabar = () => {
           <Input placeholder='Search...' />
           <SearchOutlinedIcon />
         </Search>
-        <Button>
-          <AccountCircleOutlinedIcon />
-          SIGN IN
-        </Button>
+        <Link to="signin" style={{textDecoration:"none"}}>
+          <Button>
+            <AccountCircleOutlinedIcon />
+            SIGN IN
+          </Button>
+        </Link>
       </Wrapper>
     </Container>
   )

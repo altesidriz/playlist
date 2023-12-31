@@ -90,7 +90,7 @@ export const Menu = ({
     return (
         <Container>
             <Wrapper>
-                <Link to="/" style={{textDecoration: "none", color: "inherit"}}>
+                <Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
                     <Logo>
                         <Img src={logo} />
                         VideoTube
@@ -100,14 +100,18 @@ export const Menu = ({
                     <HomeOutlinedIcon />
                     Home
                 </Item>
-                <Item>
-                    <ExploreIcon />
-                    Explore
-                </Item>
-                <Item>
-                    <SubscriptionsIcon />
-                    Subscriptions
-                </Item>
+                <Link to="trends" style={{ textDecoration: "none", color: "inherit" }}>
+                    <Item>
+                        <ExploreIcon />
+                        Explore
+                    </Item>
+                </Link>
+                <Link to="subscriptions" style={{ textDecoration: "none", color: "inherit" }}>
+                    <Item>
+                        <SubscriptionsIcon />
+                        Subscriptions
+                    </Item>
+                </Link>
                 <Hr />
                 <Item>
                     <VideoLibraryOutlinedIcon />
@@ -120,11 +124,11 @@ export const Menu = ({
                 <Hr />
                 <Login>
                     Sign in to like videos, comment, and subscribe.
-                    <Link to="signin" style={{textDecoration:"none"}}>
-                    <Button>
-                        <AccountCircleOutlinedIcon />
-                        Sign in
-                    </Button>
+                    <Link to="signin" style={{ textDecoration: "none" }}>
+                        <Button>
+                            <AccountCircleOutlinedIcon />
+                            Sign in
+                        </Button>
                     </Link>
                 </Login>
                 <Hr />

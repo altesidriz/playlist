@@ -1,6 +1,8 @@
-import React from 'react'
+import axios from 'axios';
+import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom';
 import styled from 'styled-components'
+import {format} from 'timeago.js'
 
 const Container = styled.div`
     width:  ${(props) => props.type !== "sm" && "360px"};
@@ -49,17 +51,29 @@ color: ${({ theme }) => theme.textSoft};
 
 `;
 
-const Card = ({ type }) => {
+const Card = ({ type, video }) => {
+    const baseUrl = "http://localhost:8800/api"
+
+    const [channel, setChannel] = useState({});
+  
+    useEffect(()=>{
+      const fetchChannel = async() => {
+        //try catch action needed **!**
+        const res = await axios.get(`${baseUrl}/users/find/${video.userId}`);
+        setChannel(res.data);
+      }
+      fetchChannel()
+    },[video.userId]);
     return (
         <Link to="/video/test" style={{ textDecoration: 'none' }}>
             <Container type={type}>
-                <Image type={type} src='https://images.hellomagazine.com/imagenes/film/20210126105415/harry-potter-tv-show-what-will-it-be-about/0-508-62/harry-potter-1-t.jpg' />
+                <Image type={type} src={video.imgUrl} />
                 <Details type={type}>
-                    <ChannelImage type={type} src='\src\img\d4lg5mo-8589bcd2-ee2d-4d5b-9fdc-0bb84771efa1.png' />
+                    <ChannelImage type={type} src={channel.img} />
                     <Texts>
-                        <Title>Test Video</Title>
-                        <ChannelName>Hogwartz Videos</ChannelName>
-                        <Info>88K views &bull; 1 year ago </Info>
+                        <Title>{video.videoTitle}</Title>
+                        <ChannelName>{channel.name}</ChannelName>
+                        <Info>{video.views} views &bull; {format(video.createdAt)} </Info>
                     </Texts>
                 </Details>
             </Container>

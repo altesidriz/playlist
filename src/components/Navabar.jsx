@@ -2,7 +2,9 @@ import React from 'react';
 import styled from 'styled-components';
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
+import VideoCallOutlinedIcon from '@mui/icons-material/VideoCallOutlined';
 import { Link } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 const Container = styled.div`
   position: sticky;
@@ -51,10 +53,11 @@ const Button = styled.button`
   gap: 5px;
 `;
 
-
-
+const User = styled.div``;
 
 export const Navabar = () => {
+  const {currentUser} = useSelector(state=>state.user);
+
   return (
     <Container>
       <Wrapper>
@@ -62,12 +65,17 @@ export const Navabar = () => {
           <Input placeholder='Search...' />
           <SearchOutlinedIcon />
         </Search>
+        {currentUser ? (
+          <User>
+            <VideoCallOutlinedIcon />
+          </User>
+        ) : (
         <Link to="signin" style={{textDecoration:"none"}}>
           <Button>
             <AccountCircleOutlinedIcon />
             SIGN IN
           </Button>
-        </Link>
+        </Link>)}
       </Wrapper>
     </Container>
   )

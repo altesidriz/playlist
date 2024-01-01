@@ -9,7 +9,9 @@ const Container = styled.div`
     flex-wrap: wrap;
 `;
 
-const Home = ({type}) => {
+const Home = ({
+  type,
+}) => {
   const baseUrl = "http://localhost:8800/api"
 
   const [videos, setVideos] = useState([]);

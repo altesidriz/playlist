@@ -188,4 +188,6 @@ export const Menu = ({
             </Wrapper>
         </Container>
     )
-}
+};
+
+export default Menu;

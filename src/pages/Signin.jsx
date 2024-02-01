@@ -5,6 +5,7 @@ import axios from 'axios';
 import { loginFailure, loginStart, loginSuccess } from '../redux/userSlice';
 import { auth, provider } from '../firebase';
 import { signInWithPopup } from 'firebase/auth';
+import { useNavigate } from 'react-router-dom';
 
 const Container = styled.div`
 display: flex;
@@ -71,41 +72,44 @@ margin-left: 30px;
 
 
 const Signin = () => {
-  const baseUrl = "http://localhost:8800/api";
-
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-  const handleSignin = async (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     dispatch(loginStart());
     try {
-      const res = await axios.post(`${baseUrl}/auth/signin`, { name, password });
+      const res = await axios.post("/api/auth/signin", { name, password });
       dispatch(loginSuccess(res.data));
-
-    } catch (error) {
-      dispatch(loginFailure())
+      navigate("/")
+    } catch (err) {
+      dispatch(loginFailure());
     }
-  }
+  };
 
-  const signInWithGoogle = async() => {
-    dispatch(loginStart())
+  const signInWithGoogle = async () => {
+    dispatch(loginStart());
     signInWithPopup(auth, provider)
       .then((result) => {
-        axios.post(`${baseUrl}/auth/google`, {
-          name: result.user.displayName,
-          email: result.user.email,
-          img: result.user.photoURL,
-        }).then((res)=>{
-          dispatch(loginSuccess(res.data))
-        })
+        axios
+          .post("api/auth/google", {
+            name: result.user.displayName,
+            email: result.user.email,
+            img: result.user.photoURL,
+          })
+          .then((res) => {
+            console.log(res)
+            dispatch(loginSuccess(res.data));
+            navigate("/")
+          });
       })
-      .catch((error)=> {
-        dispatch(loginFailure())
+      .catch((error) => {
+        dispatch(loginFailure());
       });
-  }
+  };
 
   return (
     <Container>
@@ -114,7 +118,7 @@ const Signin = () => {
         <SubTitle>to continue to VideoTube</SubTitle>
         <Input type='text' placeholder='username' onChange={e => setName(e.target.value)} />
         <Input type='password' placeholder='password' onChange={e => setPassword(e.target.value)} />
-        <Button onClick={handleSignin}>Sign in</Button>
+        <Button onClick={handleLogin}>Sign in</Button>
         <SubTitle>or</SubTitle>
         <Button onClick={signInWithGoogle}>Sign in with Google</Button>
         <SubTitle>or</SubTitle>

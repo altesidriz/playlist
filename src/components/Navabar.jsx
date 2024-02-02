@@ -80,7 +80,7 @@ export const Navabar = () => {
         {currentUser ? (
           <User>
             <VideoCallOutlinedIcon />
-            <Avatar />
+            <Avatar src={currentUser.img}/>
             {currentUser.name}
           </User>
         ) : (

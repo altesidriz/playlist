@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import {useDispatch, useSelector} from 'react-redux';
 
 import ThumbUpOutlinedIcon from '@mui/icons-material/ThumbUpOutlined';
 import ThumbDownOutlinedIcon from '@mui/icons-material/ThumbDownOutlined';
@@ -7,6 +8,7 @@ import ReplyOutlinedIcon from '@mui/icons-material/ReplyOutlined';
 import DownloadIcon from '@mui/icons-material/Download';
 import Comments from '../components/Comments';
 import Card from '../components/Card';
+import { useLocation } from 'react-router-dom';
 
 
 const Container = styled.div`
@@ -108,6 +110,28 @@ const Subscribe = styled.button`
 `;
 
 const Video = () => {
+  const {currentUser} = useSelector((state) => state.user);
+  const {currentVideo} = useSelector((state) => state.video);
+
+  const dispatch = useDispatch();
+  const path = useLocation().pathname.split('/')[2];
+
+  const [channel, setChannel] = useState({});
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const videoRes = await axios.get(`/api/videos/find/${path}`);
+
+        const channelRes = await axios.get(`/api/users/find/${videoRes.data.userId}`);
+        setChannel(channelRes);
+        dispatch(fetchSuccess(videoRes.data));
+      } catch (err) {}
+    };
+    fetchData();
+  }, [path, dispatch]);
+
+  
   return (
     <Container>
       <Content>
@@ -117,14 +141,13 @@ const Video = () => {
             height="545px"
             src="https://www.youtube.com/embed/KnWJepe-nxE"
             title="Youtube video player"
-            frameborder="0"
             allow="accelerometer; autoplay; clipboard-write; ancrypted-media; gyroscope; picture-in-picture"
             allowFullScreen
           ></iframe>
         </VideoWrapper>
-        <Title>Harry Potter And The Cursed Child - Trailer(2025)</Title>
+        <Title>{currentVideo?.title}</Title>
         <Details>
-          <Info>2.1m views &bull; 9 days ago</Info>
+          <Info>{currentVideo?.views} views &bull; 9 days ago</Info>
           <Buttons>
             <Button><ThumbUpOutlinedIcon />10K</Button>
             <Button><ThumbDownOutlinedIcon /></Button>
@@ -150,7 +173,7 @@ const Video = () => {
         <Hr></Hr>
         <Comments />
       </Content>
-      <Recommendations>
+      {/* <Recommendations>
         <Card type="sm"/>
         <Card type="sm"/>
         <Card type="sm"/>
@@ -158,7 +181,7 @@ const Video = () => {
         <Card type="sm"/>
         <Card type="sm"/>
         <Card type="sm"/>
-      </Recommendations>
+      </Recommendations> */}
     </Container>
   )
 }

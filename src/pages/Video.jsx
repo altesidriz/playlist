@@ -1,6 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import styled from 'styled-components';
-import {useDispatch, useSelector} from 'react-redux';
+import { useDispatch, useSelector } from "react-redux";
+import { useLocation } from "react-router-dom";
+import axios from "axios";
+import { dislike, fetchSuccess, like } from "../redux/videoSlice";
+import React, { useEffect, useState } from "react";
+import styled from "styled-components";
 
 import ThumbUpOutlinedIcon from '@mui/icons-material/ThumbUpOutlined';
 import ThumbDownOutlinedIcon from '@mui/icons-material/ThumbDownOutlined';
@@ -8,7 +11,6 @@ import ReplyOutlinedIcon from '@mui/icons-material/ReplyOutlined';
 import DownloadIcon from '@mui/icons-material/Download';
 import Comments from '../components/Comments';
 import Card from '../components/Card';
-import { useLocation } from 'react-router-dom';
 
 
 const Container = styled.div`
@@ -110,11 +112,11 @@ const Subscribe = styled.button`
 `;
 
 const Video = () => {
-  const {currentUser} = useSelector((state) => state.user);
-  const {currentVideo} = useSelector((state) => state.video);
-
+  const { currentUser } = useSelector((state) => state.user);
+  const { currentVideo } = useSelector((state) => state.video);
   const dispatch = useDispatch();
-  const path = useLocation().pathname.split('/')[2];
+
+  const path = useLocation().pathname.split("/")[2];
 
   const [channel, setChannel] = useState({});
 
@@ -122,9 +124,8 @@ const Video = () => {
     const fetchData = async () => {
       try {
         const videoRes = await axios.get(`/api/videos/find/${path}`);
-
         const channelRes = await axios.get(`/api/users/find/${videoRes.data.userId}`);
-        setChannel(channelRes);
+        setChannel(channelRes.data);
         dispatch(fetchSuccess(videoRes.data));
       } catch (err) {}
     };
@@ -145,9 +146,9 @@ const Video = () => {
             allowFullScreen
           ></iframe>
         </VideoWrapper>
-        <Title>{currentVideo?.title}</Title>
+        <Title>{currentVideo.title}</Title>
         <Details>
-          <Info>{currentVideo?.views} views &bull; 9 days ago</Info>
+          <Info>{currentVideo.views} views &bull; 9 days ago</Info>
           <Buttons>
             <Button><ThumbUpOutlinedIcon />10K</Button>
             <Button><ThumbDownOutlinedIcon /></Button>

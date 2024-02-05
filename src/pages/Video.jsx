@@ -2,15 +2,20 @@ import { useDispatch, useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
 import { dislike, fetchSuccess, like } from "../redux/videoSlice";
+import { subscription } from "../redux/userSlice";
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
+import { format } from "timeago.js";
 
 import ThumbUpOutlinedIcon from '@mui/icons-material/ThumbUpOutlined';
+import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ThumbDownOutlinedIcon from '@mui/icons-material/ThumbDownOutlined';
+import ThumbDownIcon from '@mui/icons-material/ThumbDown';
 import ReplyOutlinedIcon from '@mui/icons-material/ReplyOutlined';
 import DownloadIcon from '@mui/icons-material/Download';
 import Comments from '../components/Comments';
 import Card from '../components/Card';
+import Recommendation from "../components/Recommendation";
 
 
 const Container = styled.div`
@@ -111,6 +116,13 @@ const Subscribe = styled.button`
   cursor: pointer;
 `;
 
+const VideoFrame = styled.video`
+  max-height: 720px;
+  width: 100%;
+  object-fit: cover;
+`;
+
+
 const Video = () => {
   const { currentUser } = useSelector((state) => state.user);
   const { currentVideo } = useSelector((state) => state.video);
@@ -132,26 +144,47 @@ const Video = () => {
     fetchData();
   }, [path, dispatch]);
 
+  const handleLike = async () => {
+    await axios.put(`/api/users/like/${currentVideo._id}`);
+    dispatch(like(currentUser._id));
+  };
+  const handleDislike = async () => {
+    await axios.put(`/api/users/dislike/${currentVideo._id}`);
+    dispatch(dislike(currentUser._id));
+  };
+  const handleSub = async () => {
+    currentUser.subscribedUsers.includes(channel._id)
+      ? await axios.put(`/api/users/unsub/${channel._id}`)
+      : await axios.put(`/api/users/sub/${channel._id}`);
+    dispatch(subscription(channel._id));
+  };
+
   
   return (
     <Container>
       <Content>
         <VideoWrapper>
-          <iframe
-            width="100%"
-            height="545px"
-            src="https://www.youtube.com/embed/KnWJepe-nxE"
-            title="Youtube video player"
-            allow="accelerometer; autoplay; clipboard-write; ancrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-          ></iframe>
+          <VideoFrame src={currentVideo.videoUrl} autoPlay controls/>
         </VideoWrapper>
         <Title>{currentVideo.title}</Title>
         <Details>
-          <Info>{currentVideo.views} views &bull; 9 days ago</Info>
+          <Info>{currentVideo.views} views &bull; {format(currentVideo.createdAt)}</Info>
           <Buttons>
-            <Button><ThumbUpOutlinedIcon />10K</Button>
-            <Button><ThumbDownOutlinedIcon /></Button>
+            <Button onClick={handleLike}>
+              {currentVideo.likes?.includes(currentUser._id) ? (
+              <ThumbUpIcon />
+              ) : (
+              <ThumbUpOutlinedIcon />)}{" "}
+              {currentVideo.likes?.length}
+            </Button>
+            <Button onClick={handleDislike}>
+              {currentVideo.dislikes?.includes(currentUser?._id) ? (
+                <ThumbDownIcon />
+              ) : (
+                <ThumbDownOutlinedIcon />
+              )}{" "}
+              Dislike
+            </Button>
             <Button><ReplyOutlinedIcon />Share</Button>
             <Button><DownloadIcon />Download</Button>
           </Buttons>
@@ -159,30 +192,25 @@ const Video = () => {
         <Hr></Hr>
         <Channel>
           <ChannelInfo>
-            <Image src='\src\img\d4lg5mo-8589bcd2-ee2d-4d5b-9fdc-0bb84771efa1.png' />
+            <Image src={channel.img}/>
             <ChannelDetail>
-              <ChannelName>Hogwarts Videos</ChannelName>
-              <ChanelCounter>1.2mil subscribers</ChanelCounter>
+              <ChannelName>{channel.name}</ChannelName>
+              <ChanelCounter>{channel.sub} subscribers</ChanelCounter>
               <Description>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. 
-              Aliquid atque quasi architecto minus nam dolorum voluptatibus commodi quidem pariatur voluptatem.
+              {currentVideo.desc}
               </Description>
             </ChannelDetail>
           </ChannelInfo>
-          <Subscribe>SUBSCRIBE</Subscribe>
+          <Subscribe onClick={handleSub}>
+            {currentUser.subscribedUsers?.includes(channel._id)
+              ? "SUBSCRIBED"
+              : "SUBSCRIBE"}
+          </Subscribe>
         </Channel>
         <Hr></Hr>
-        <Comments />
+        <Comments videoId={currentVideo._id}/>
       </Content>
-      {/* <Recommendations>
-        <Card type="sm"/>
-        <Card type="sm"/>
-        <Card type="sm"/>
-        <Card type="sm"/>
-        <Card type="sm"/>
-        <Card type="sm"/>
-        <Card type="sm"/>
-      </Recommendations> */}
+      <Recommendation tags={currentVideo.tags}/>
     </Container>
   )
 }

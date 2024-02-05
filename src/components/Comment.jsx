@@ -1,5 +1,8 @@
 import React from 'react'
-import styled from 'styled-components'
+import { useEffect } from 'react';
+import { useState } from 'react';
+import styled from 'styled-components';
+import axios from 'axios';
 
 const Container = styled.div`
     display: flex;
@@ -38,15 +41,25 @@ const Text = styled.p`
 
 
 
-const Comment = () => {
+const Comment = ({ comment }) => {
+    const [channel, setChannel] = useState({});
+
+    useEffect(() => {
+        const fetchComment = async () => {
+            const res = await axios.get(`/api/users/find/${comment.userId}`);
+            setChannel(res.data)
+        };
+        fetchComment();
+    }, [comment.userId]);
+
     return (
         <Container>
-            <Avatar src='\src\img\d4lg5mo-8589bcd2-ee2d-4d5b-9fdc-0bb84771efa1.png' />
+            <Avatar src={channel.img} />
             <Details>
                 <UserName>
-                    Harry Potter <Date>5 hours ago</Date>
+                    {channel.name} <Date>5 hours ago</Date>
                 </UserName>
-                <Text>Lorem ipsum dolor sit amet consectetur adipisicing elit. Laborum, reprehenderit. Quae repellendus, doloremque id iure temporibus reprehenderit vitae sapiente? Optio consequatur odio quasi ea, dolorum modi unde architecto quidem minus necessitatibus, blanditiis facere. Neque quasi eaque, aliquam hic ipsam aut!</Text>
+                <Text>{comment.desc}</Text>
             </Details>
         </Container>
     )

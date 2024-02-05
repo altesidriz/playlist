@@ -8,6 +8,7 @@ import { useState } from 'react';
 import Home from './pages/Home';
 import Video from './pages/Video';
 import Signin from './pages/Signin';
+import Search from './pages/Search';
 import { useSelector } from 'react-redux';
 
 const Container = styled.div`
@@ -42,7 +43,7 @@ function App() {
                   <Route index element={<Home type="random" />} />
                   <Route path="trends" element={<Home type="trend" />} />
                   <Route path="subscriptions" element={<Home type="sub" />} />
-                  {/* <Route path="search" element={<Search />} /> */}
+                  <Route path="search" element={<Search />} />
                   <Route
                     path="signin"
                     element={currentUser ? <Home /> : <Signin />}

@@ -1,11 +1,12 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
-import { dislike, fetchSuccess, like } from "../redux/videoSlice";
+import { dislike, fetchStart, fetchSuccess, fetchFailure, like } from "../redux/videoSlice"; 
 import { subscription } from "../redux/userSlice";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { format } from "timeago.js";
+
 
 import ThumbUpOutlinedIcon from '@mui/icons-material/ThumbUpOutlined';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
@@ -13,9 +14,9 @@ import ThumbDownOutlinedIcon from '@mui/icons-material/ThumbDownOutlined';
 import ThumbDownIcon from '@mui/icons-material/ThumbDown';
 import ReplyOutlinedIcon from '@mui/icons-material/ReplyOutlined';
 import DownloadIcon from '@mui/icons-material/Download';
-import Comments from '../components/Comments';
-import Card from '../components/Card';
+import Comments from '../components/Comments'
 import Recommendation from "../components/Recommendation";
+import AvatarImg from '../assets/avatar.png';
 
 
 const Container = styled.div`
@@ -28,7 +29,6 @@ const Content = styled.div`
 `;
 
 const VideoWrapper = styled.div`
-  flex: 5;
 `;
 
 const Title = styled.h1`
@@ -62,9 +62,6 @@ const Button = styled.div`
   cursor: pointer;
 `;
 
-const Recommendations = styled.div`
-  flex: 2;
-`;
 
 const Hr = styled.hr`
   margin: 15px 0;
@@ -85,6 +82,7 @@ const Image = styled.img`
 width: 50px;
 height: 50px; 
 border-radius: 50%;
+object-fit: cover; 
 `;
 const ChannelDetail = styled.div`
   display: flex;
@@ -94,7 +92,6 @@ const ChannelDetail = styled.div`
 const ChannelName = styled.span`
   font-weight: 500;
 `;
-
 
 const ChanelCounter = styled.span`
   margin: 8px 0 20px 0;
@@ -122,44 +119,120 @@ const VideoFrame = styled.video`
   object-fit: cover;
 `;
 
-
 const Video = () => {
   const { currentUser } = useSelector((state) => state.user);
-  const { currentVideo } = useSelector((state) => state.video);
+  const { currentVideo, loading, error } = useSelector((state) => state.video); 
   const dispatch = useDispatch();
 
   const path = useLocation().pathname.split("/")[2];
 
   const [channel, setChannel] = useState({});
+  const [channelLoading, setChannelLoading] = useState(true); 
+  const [channelError, setChannelError] = useState(false);   
+
 
   useEffect(() => {
     const fetchData = async () => {
+      dispatch(fetchStart()); 
+      setChannelLoading(true); 
+      setChannelError(false); 
+
       try {
         const videoRes = await axios.get(`/api/videos/find/${path}`);
+        
+        if (!videoRes.data || !videoRes.data.userId) {
+          throw new Error("Video data or userId is missing.");
+        }
+
         const channelRes = await axios.get(`/api/users/find/${videoRes.data.userId}`);
-        setChannel(channelRes.data);
-        dispatch(fetchSuccess(videoRes.data));
-      } catch (err) {}
+        
+        setChannel(channelRes.data); 
+        dispatch(fetchSuccess(videoRes.data)); 
+      } catch (err) {
+        console.error("Error fetching video or channel:", err);
+        dispatch(fetchFailure()); 
+        setChannelError(true); 
+      } finally {
+        setChannelLoading(false); 
+      }
     };
     fetchData();
   }, [path, dispatch]);
 
+
   const handleLike = async () => {
-    await axios.put(`/api/users/like/${currentVideo._id}`);
-    dispatch(like(currentUser._id));
+    
+    if (!currentVideo || !currentUser) {
+      console.warn("Cannot like/dislike: Video not loaded or user not logged in.");
+      return;
+    }
+
+    try {
+      
+      if (currentVideo.likes.includes(currentUser._id)) {
+        
+        await axios.put(`/api/users/unlike/${currentVideo._id}`); 
+      } else {
+        
+        await axios.put(`/api/users/like/${currentVideo._id}`);
+      }
+      dispatch(like(currentUser._id));
+    } catch (err) {
+      console.error("Error handling like:", err);
+      
+    }
   };
+
   const handleDislike = async () => {
-    await axios.put(`/api/users/dislike/${currentVideo._id}`);
-    dispatch(dislike(currentUser._id));
+    
+    if (!currentVideo || !currentUser) {
+      console.warn("Cannot like/dislike: Video not loaded or user not logged in.");
+      return;
+    }
+
+    try {
+      
+      if (currentVideo.dislikes.includes(currentUser._id)) {
+        
+        await axios.put(`/api/users/undislike/${currentVideo._id}`); 
+      } else {
+        
+        await axios.put(`/api/users/dislike/${currentVideo._id}`);
+      }
+      dispatch(dislike(currentUser._id));
+    } catch (err) {
+      console.error("Error handling dislike:", err);
+      
+    }
   };
+
   const handleSub = async () => {
-    currentUser.subscribedUsers.includes(channel._id)
-      ? await axios.put(`/api/users/unsub/${channel._id}`)
-      : await axios.put(`/api/users/sub/${channel._id}`);
-    dispatch(subscription(channel._id));
+    
+    if (!currentUser || !channel._id) {
+      console.warn("Cannot subscribe/unsubscribe: User or channel not loaded.");
+      return;
+    }
+
+    try {
+      if (currentUser.subscribedUsers?.includes(channel._id)) { 
+        await axios.put(`/api/users/unsub/${channel._id}`);
+      } else {
+        await axios.put(`/api/users/sub/${channel._id}`);
+      }
+      dispatch(subscription(channel._id));
+    } catch (err) {
+      console.error("Error handling subscription:", err);
+      
+    }
   };
 
   
+  if (loading) return <Container>Loading video...</Container>;
+  if (error) return <Container>Something went wrong: Could not load video.</Container>;
+  
+  if (!currentVideo) return <Container>Video not found.</Container>;
+
+
   return (
     <Container>
       <Content>
@@ -168,17 +241,21 @@ const Video = () => {
         </VideoWrapper>
         <Title>{currentVideo.title}</Title>
         <Details>
-          <Info>{currentVideo.views} views &bull; {format(currentVideo.createdAt)}</Info>
+          <Info>
+            {currentVideo.views} views &bull; {format(currentVideo.createdAt)}
+          </Info>
           <Buttons>
-            <Button onClick={handleLike}>
-              {currentVideo.likes?.includes(currentUser._id) ? (
-              <ThumbUpIcon />
+            
+            <Button onClick={handleLike} disabled={!currentUser}>
+              {currentVideo.likes?.includes(currentUser?._id) ? ( 
+                <ThumbUpIcon />
               ) : (
-              <ThumbUpOutlinedIcon />)}{" "}
-              {currentVideo.likes?.length}
+                <ThumbUpOutlinedIcon />)}
+              {" "}
+              {currentVideo.likes?.length || 0} 
             </Button>
-            <Button onClick={handleDislike}>
-              {currentVideo.dislikes?.includes(currentUser?._id) ? (
+            <Button onClick={handleDislike} disabled={!currentUser}>
+              {currentVideo.dislikes?.includes(currentUser?._id) ? ( 
                 <ThumbDownIcon />
               ) : (
                 <ThumbDownOutlinedIcon />
@@ -192,27 +269,44 @@ const Video = () => {
         <Hr></Hr>
         <Channel>
           <ChannelInfo>
-            <Image src={channel.img}/>
+            {channelLoading ? ( 
+                <Image src="" alt="Loading channel image..." />
+            ) : channelError ? (
+                <Image src="" alt="Channel image failed to load" />
+            ) : (
+                <Image src={channel.img || AvatarImg} alt={channel.name || "Channel Image"}/>
+            )}
             <ChannelDetail>
-              <ChannelName>{channel.name}</ChannelName>
-              <ChanelCounter>{channel.sub} subscribers</ChanelCounter>
+              {channelLoading ? (
+                <ChannelName>Loading Channel...</ChannelName>
+              ) : channelError ? (
+                <ChannelName>Unknown Channel</ChannelName>
+              ) : (
+                <ChannelName>{channel.name}</ChannelName>
+              )}
+              <ChanelCounter>
+                {channelLoading ? "..." : channelError ? "N/A" : `${channel.sub} subscribers`}
+              </ChanelCounter>
               <Description>
-              {currentVideo.desc}
+                {currentVideo.desc} 
               </Description>
             </ChannelDetail>
           </ChannelInfo>
-          <Subscribe onClick={handleSub}>
-            {currentUser.subscribedUsers?.includes(channel._id)
-              ? "SUBSCRIBED"
-              : "SUBSCRIBE"}
-          </Subscribe>
+          {currentUser && ( 
+            <Subscribe onClick={handleSub}>
+              {currentUser.subscribedUsers?.includes(channel._id) 
+                ? "SUBSCRIBED"
+                : "SUBSCRIBE"}
+            </Subscribe>
+          )}
         </Channel>
         <Hr></Hr>
-        <Comments videoId={currentVideo._id}/>
+        {currentVideo._id && <Comments videoId={currentVideo._id}/>} 
       </Content>
-      <Recommendation tags={currentVideo.tags}/>
+      {currentVideo.tags && <Recommendation tags={currentVideo.tags}/>} 
     </Container>
   )
 }
 
-export default Video
+
+export default Video;

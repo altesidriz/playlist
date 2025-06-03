@@ -3,6 +3,9 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import styled from "styled-components";
 import { loginFailure, loginStart, loginSuccess } from "../redux/userSlice";
+import { auth, provider } from "../firebase"; // Assuming correct path to firebase config
+import { signInWithPopup } from "firebase/auth";
+// Removed: import { async } from "@firebase/util"; - This was a typo/unnecessary import
 import { useNavigate } from "react-router-dom";
 
 const Container = styled.div`
@@ -22,7 +25,7 @@ const Wrapper = styled.div`
   border: 1px solid ${({ theme }) => theme.soft};
   padding: 20px 50px;
   gap: 10px;
-  border-radius: 8px; 
+  border-radius: 8px; /* Added: slight border-radius */
 `;
 
 const Title = styled.h1`
@@ -32,7 +35,7 @@ const Title = styled.h1`
 const SubTitle = styled.h2`
   font-size: 20px;
   font-weight: 300;
-  margin-bottom: 10px; 
+  margin-bottom: 10px; /* Added: spacing */
 `;
 
 const Input = styled.input`
@@ -52,10 +55,10 @@ const Button = styled.button`
   cursor: pointer;
   background-color: ${({ theme }) => theme.soft};
   color: ${({ theme }) => theme.textSoft};
-  width: 100%; 
-  margin-top: 5px; 
+  width: 100%; /* Make buttons full width */
+  margin-top: 5px; /* Add some space */
   
-  &:disabled { 
+  &:disabled { /* Style for disabled button */
     opacity: 0.6;
     cursor: not-allowed;
   }
@@ -82,24 +85,24 @@ const Link = styled.span`
   margin-left: 30px;
 `;
 
-const SignIn = () => {
-  
+const SignInWithGoogle = () => {
+  // State for Login
   const [loginName, setLoginName] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
-  const [loginError, setLoginError] = useState(null); 
+  const [loginError, setLoginError] = useState(null); // Added: for login errors
 
-  
+  // State for Registration
   const [registerName, setRegisterName] = useState("");
   const [registerEmail, setRegisterEmail] = useState("");
   const [registerPassword, setRegisterPassword] = useState("");
-  const [registerError, setRegisterError] = useState(null); 
+  const [registerError, setRegisterError] = useState(null); // Added: for registration errors
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setLoginError(null); 
+    setLoginError(null); // Clear previous errors
     dispatch(loginStart());
     try {
       const res = await axios.post("/api/auth/signin", { name: loginName, password: loginPassword });
@@ -107,36 +110,56 @@ const SignIn = () => {
       navigate("/");
     } catch (err) {
       const errorMessage = err.response?.data?.message || "Something went wrong!";
-      setLoginError(errorMessage); 
+      setLoginError(errorMessage); // Set user-friendly error message
       dispatch(loginFailure());
     }
   };
 
- 
+  const signInWithGoogle = async () => {
+    setLoginError(null); // Clear previous errors
+    dispatch(loginStart());
+    try {
+      const result = await signInWithPopup(auth, provider);
+      
+      const res = await axios.post("/api/auth/google", {
+        name: result.user.displayName,
+        email: result.user.email,
+        img: result.user.photoURL,
+      });
+      // console.log(res); // Remove this console.log in production
+      dispatch(loginSuccess(res.data));
+      navigate("/");
+    } catch (error) {
+      const errorMessage = error.response?.data?.message || error.message || "Google Sign-in failed.";
+      setLoginError(errorMessage); // Set user-friendly error message
+      dispatch(loginFailure());
+    }
+  };
 
+  // Implemented REGISTER FUNCTIONALITY
   const handleRegister = async (e) => {
     e.preventDefault();
-    setRegisterError(null); 
-    dispatch(loginStart()); 
+    setRegisterError(null); // Clear previous errors
+    dispatch(loginStart()); // Use loginStart for registration too if it dispatches a loading state
 
-    
+    // Basic client-side validation
     if (!registerName || !registerEmail || !registerPassword) {
       setRegisterError("Please fill in all registration fields.");
-      dispatch(loginFailure()); 
+      dispatch(loginFailure()); // Stop loading state if validation fails
       return;
     }
 
     try {
-      
+      // Assuming your backend has a /api/auth/signup endpoint
       const res = await axios.post("/api/auth/signup", {
         name: registerName,
         email: registerEmail,
         password: registerPassword,
       });
       
-      
+      // Assuming successful registration also logs the user in immediately
       if (res.status === 200 || res.status === 201) {
-        dispatch(loginSuccess(res.data)); 
+        dispatch(loginSuccess(res.data)); // Dispatch loginSuccess if backend returns user data
         navigate("/");
       } else {
         setRegisterError(res.data?.message || "Registration failed with unexpected status.");
@@ -144,7 +167,7 @@ const SignIn = () => {
       }
     } catch (err) {
       const errorMessage = err.response?.data?.message || "Registration failed!";
-      setRegisterError(errorMessage); 
+      setRegisterError(errorMessage); // Set user-friendly error message
       dispatch(loginFailure());
     }
   };
@@ -157,41 +180,38 @@ const SignIn = () => {
         <SubTitle>to continue to VideoTube</SubTitle>
         <Input
           placeholder="username"
-          onChange={(e) => { setLoginName(e.target.value); setLoginError(null); }} 
-          value={loginName} 
+          onChange={(e) => { setLoginName(e.target.value); setLoginError(null); }} // Clear error on change
+          value={loginName} // Controlled component
         />
         <Input
           type="password"
           placeholder="password"
-          onChange={(e) => { setLoginPassword(e.target.value); setLoginError(null); }} 
-          value={loginPassword} 
+          onChange={(e) => { setLoginPassword(e.target.value); setLoginError(null); }} // Clear error on change
+          value={loginPassword} // Controlled component
         />
-        {loginError && <Message>{loginError}</Message>} 
+        {loginError && <Message>{loginError}</Message>} {/* Display login error */}
         <Button onClick={handleLogin}>Sign in</Button>
-        
-        
-        
-        
-        
-        <Title style={{marginTop: "15px"}}>or</Title> 
+        <Title>or</Title>
+        <Button onClick={signInWithGoogle}>Signin with Google</Button>
+        <Title>or</Title>
         <Input
           placeholder="username"
-          onChange={(e) => { setRegisterName(e.target.value); setRegisterError(null); }} 
-          value={registerName} 
+          onChange={(e) => { setRegisterName(e.target.value); setRegisterError(null); }} // Separate state, clear error
+          value={registerName} // Controlled component
         />
         <Input
           placeholder="email"
-          onChange={(e) => { setRegisterEmail(e.target.value); setRegisterError(null); }} 
-          value={registerEmail} 
+          onChange={(e) => { setRegisterEmail(e.target.value); setRegisterError(null); }} // Separate state, clear error
+          value={registerEmail} // Controlled component
         />
         <Input
           type="password"
           placeholder="password"
-          onChange={(e) => { setRegisterPassword(e.target.value); setRegisterError(null); }} 
-          value={registerPassword} 
+          onChange={(e) => { setRegisterPassword(e.target.value); setRegisterError(null); }} // Separate state, clear error
+          value={registerPassword} // Controlled component
         />
-        {registerError && <Message>{registerError}</Message>} 
-        <Button onClick={handleRegister}>Sign up</Button> 
+        {registerError && <Message>{registerError}</Message>} {/* Display registration error */}
+        <Button onClick={handleRegister}>Sign up</Button> {/* Link to handleRegister */}
       </Wrapper>
       <More>
         English(USA)
@@ -205,4 +225,4 @@ const SignIn = () => {
   );
 };
 
-export default SignIn;
+export default SignInWithGoogle;

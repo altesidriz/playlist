@@ -12,11 +12,13 @@ export const videoSlice = createSlice({
   reducers: {
     fetchStart: (state) => {
       state.loading = true;
+      state.error = false; 
     },
 
     fetchSuccess: (state, action) => {
       state.loading = false;
       state.currentVideo = action.payload;
+      state.error = false; 
     },
 
     fetchFailure: (state) => {
@@ -25,25 +27,41 @@ export const videoSlice = createSlice({
     },
 
     like: (state, action) => {
-      if (!state.currentVideo.likes.includes(action.payload)) {
-        state.currentVideo.likes.push(action.payload);
-        state.currentVideo.dislikes.splice(
-          state.currentVideo.dislikes.findIndex(
-            (userId) => userId === action.payload
-          ),
-          1
-        );
+      if (state.currentVideo) { 
+        if (!state.currentVideo.likes.includes(action.payload)) {
+          state.currentVideo.likes.push(action.payload);
+          state.currentVideo.dislikes.splice(
+            state.currentVideo.dislikes.findIndex(
+              (userId) => userId === action.payload
+            ),
+            1
+          );
+        }
+      } else {
+        console.warn("Attempted to 'like' a video, but currentVideo is null.");
+        
+        
       }
     },
-    dislike: (state, action) => {
-      if (!state.currentVideo.dislikes.includes(action.payload)) {
-        state.currentVideo.dislikes.push(action.payload);
-        state.currentVideo.likes.splice(
-          state.currentVideo.likes.findIndex(
-            (userId) => userId === action.payload
-          ),
-          1
-        );
+
+   dislike: (state, action) => { 
+      
+      if (state.currentVideo) {
+        
+        if (!state.currentVideo.dislikes.includes(action.payload)) {
+          state.currentVideo.dislikes.push(action.payload); 
+          
+          state.currentVideo.likes.splice(
+            state.currentVideo.likes.findIndex(
+              (userId) => userId === action.payload
+            ),
+            1
+          );
+        }
+        
+        
+      } else {
+        console.warn("Attempted to 'dislike' a video, but currentVideo is null.");
       }
     },
   },

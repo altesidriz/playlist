@@ -1,8 +1,10 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import {format} from "timeago.js";
+import PropTypes from 'prop-types'; 
+import AvatarImg from '../assets/avatar.png';
 
 const Container = styled.div`
   width: ${(props) => props.type !== "sm" && "360px"};
@@ -17,6 +19,7 @@ const Image = styled.img`
   height: ${(props) => (props.type === "sm" ? "120px" : "202px")};
   background-color: #999;
   flex: 1;
+  object-fit: cover; 
 `;
 
 const Details = styled.div`
@@ -32,6 +35,7 @@ const ChannelImage = styled.img`
   border-radius: 50%;
   background-color: #999;
   display: ${(props) => props.type === "sm" && "none"};
+  object-fit: cover; 
 `;
 
 const Texts = styled.div``;
@@ -55,14 +59,25 @@ const Info = styled.div`
 
 const Card = ({ type, video }) => {
   const [channel, setChannel] = useState({});
+  const [channelLoading, setChannelLoading] = useState(true); 
+  const [channelError, setChannelError] = useState(false);   
 
   useEffect(() => {
     const fetchChannel = async () => {
-      const res = await axios.get(`/api/users/find/${video.userId}`);
-      setChannel(res.data);
+      setChannelLoading(true); 
+      setChannelError(false);   
+      try {
+        const res = await axios.get(`/api/users/find/${video.userId}`);
+        setChannel(res.data);
+      } catch (err) {
+        console.error("Error fetching channel:", err);
+        setChannelError(true); 
+      } finally {
+        setChannelLoading(false); 
+      }
     };
     fetchChannel();
-  }, [video.userId]);
+  }, [video.userId]); 
 
   return (
     <Link to={`/video/${video._id}`} style={{ textDecoration: "none" }}>
@@ -70,21 +85,51 @@ const Card = ({ type, video }) => {
         <Image
           type={type}
           src={video.imgUrl}
+          alt={video.title} 
         />
         <Details type={type}>
-          <ChannelImage
-            type={type}
-            src={channel.img}
-          />
+          {channelLoading ? ( 
+            <ChannelImage type={type} /> 
+          ) : channelError ? (
+            <ChannelImage type={type} /> 
+          ) : (
+            <ChannelImage
+              type={type}
+              src={channel.img || AvatarImg}
+              alt={channel.name} 
+            />
+          )}
           <Texts>
             <Title>{video.title}</Title>
-            <ChannelName>{channel.name}</ChannelName>
-            <Info>{video.views} views • {format(video.createdAt)}</Info>
+            {channelLoading ? (
+              <ChannelName>Loading Channel...</ChannelName> 
+            ) : channelError ? (
+              <ChannelName>Unknown Channel</ChannelName> 
+            ) : (
+              <ChannelName>{channel.name}</ChannelName> 
+            )}
+            <Info>
+              {video.views} views • {format(video.createdAt)}
+            </Info>
           </Texts>
         </Details>
       </Container>
     </Link>
   );
+};
+
+
+Card.propTypes = {
+  type: PropTypes.string, 
+  video: PropTypes.shape({ 
+    _id: PropTypes.string.isRequired,
+    userId: PropTypes.string.isRequired,
+    imgUrl: PropTypes.string.isRequired,
+    title: PropTypes.string.isRequired,
+    views: PropTypes.number.isRequired, 
+    createdAt: PropTypes.string.isRequired, 
+    
+  }).isRequired,
 };
 
 export default Card;

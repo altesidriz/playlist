@@ -23,7 +23,8 @@ import PropTypes from 'prop-types';
 const Container = styled.div`
   flex: 1;
   background-color: ${({ theme }) => theme.bgLighter};
-  height: 100%;
+  height: auto;
+  min-height: 100vh;
   color: ${({ theme }) => theme.text};
   font-size: 14px;
   position: sticky;

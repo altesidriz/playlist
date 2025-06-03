@@ -13,6 +13,8 @@ import { useSelector } from 'react-redux';
 
 const Container = styled.div`
   display: flex;
+  height: auto;
+  min-height: 100vh;
 `;
 
 const Main = styled.div`

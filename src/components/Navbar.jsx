@@ -46,7 +46,7 @@ const Input = styled.input`
   border: none;
   background-color: transparent;
   outline: none;
-  width: 100%; /* Ensure input takes full width */
+  width: 100%; 
 `;
 
 const Button = styled.button`
@@ -78,9 +78,9 @@ const Avatar = styled.img`
   object-fit: cover; 
 `;
 
-const LogoutButton = styled(Button)` /* Reusing Button style for logout */
+const LogoutButton = styled(Button)` 
   gap: 5px;
-  margin-left: 15px; /* Add some spacing */
+  margin-left: 15px; 
   padding: 5px 10px;
 `;
 
@@ -89,23 +89,16 @@ export const Navbar = () => {
   const [open, setOpen] = useState(false);
   const [q, setQ] = useState("");
   const navigate = useNavigate();
-  const dispatch = useDispatch(); // Initialize useDispatch hook
+  const dispatch = useDispatch();
   const { currentUser } = useSelector(state => state.user);
 
   const handleLogout = async () => {
     try {
-      // Make an API call to your backend logout endpoint
       await axios.post("/api/auth/logout");
-      
-      // Dispatch the Redux logout action
       dispatch(logout());
-      
-      // Navigate to home or signin page after logout
-      navigate("/signin"); // Or navigate("/")
+      navigate("/signin"); 
     } catch (err) {
       console.error("Error during logout:", err);
-      // Optionally, dispatch loginFailure or show an error message
-      // dispatch(loginFailure()); // If you want to use loginFailure for logout errors
     }
   };
 
@@ -117,7 +110,7 @@ export const Navbar = () => {
             <Input
               placeholder="Search..."
               onChange={(e) => setQ(e.target.value)}
-              onKeyDown={(e) => { // Added for search on Enter key
+              onKeyDown={(e) => {
                 if (e.key === 'Enter') {
                   navigate(`/search?q=${q}`);
                 }

@@ -22,6 +22,11 @@ import AvatarImg from '../assets/avatar.png';
 const Container = styled.div`
   display: flex;
   gap: 24px;
+
+   @media (max-width: 480px) {
+   flex-direction: column;
+   padding: 10px;
+  }
 `;
 
 const Content = styled.div`
@@ -37,12 +42,21 @@ const Title = styled.h1`
   margin-top: 20px;
   margin-bottom: 10px;
   color: ${({ theme }) => theme.text};
+
+   @media (max-width: 480px) {
+    font-size: 14px;
+  }
 `;
 
 const Details = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
+
+  @media (max-width: 480px) {
+    font-size: 12px;
+    flex-wrap: wrap;
+  }
 `;
 
 const Info = styled.span`
@@ -53,6 +67,12 @@ const Buttons = styled.div`
   display: flex;
   gap: 20px;
   color: ${({ theme }) => theme.text};
+
+  @media (max-width: 480px){
+    width: 100%;
+    padding-top: 10px;
+    justify-content: space-around;
+  }
 `;
 
 const Button = styled.div`
@@ -60,6 +80,12 @@ const Button = styled.div`
   align-items: center;
   gap: 5px;
   cursor: pointer;
+
+  @media (max-width: 480px){
+    span{
+      display: none;
+    }
+  }
 `;
 
 
@@ -100,6 +126,8 @@ const ChanelCounter = styled.span`
 `;
 const Description = styled.p`
 font-size: 14px;
+
+
 `;
 
 const Subscribe = styled.button`
@@ -260,10 +288,10 @@ const Video = () => {
               ) : (
                 <ThumbDownOutlinedIcon />
               )}{" "}
-              Dislike
+              <span>Dislike</span>
             </Button>
-            <Button><ReplyOutlinedIcon />Share</Button>
-            <Button><DownloadIcon />Download</Button>
+            <Button><ReplyOutlinedIcon /><span>Share</span></Button>
+            <Button><DownloadIcon /><span>Download</span></Button>
           </Buttons>
         </Details>
         <Hr></Hr>

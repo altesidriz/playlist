@@ -18,7 +18,7 @@ import SettingsBrightnessOutlinedIcon from '@mui/icons-material/SettingsBrightne
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
 import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import PropTypes from 'prop-types'; 
+import PropTypes from 'prop-types';
 
 const Container = styled.div`
   flex: 1;
@@ -29,10 +29,21 @@ const Container = styled.div`
   font-size: 14px;
   position: sticky;
   top: 0;
+
+  @media (max-width: 768px) {
+    flex: 0;
+    width: 20vw;
+  }
 `;
 
 const Wrapper = styled.div`
   padding: 18px 26px;
+  
+  @media (max-width: 768px) {
+    display: flex;
+    flex-direction: column;
+    row-gap: 10px;
+    }
 `;
 const Logo = styled.div`
   display: flex;
@@ -40,6 +51,12 @@ const Logo = styled.div`
   gap: 5px;
   font-weight: bold;
   margin-bottom: 25px;
+
+  span{
+    @media (max-width: 768px) {
+      display: none;
+    }
+  }
 `;
 
 const Img = styled.img`
@@ -56,15 +73,29 @@ const Item = styled.div`
   &:hover {
     background: ${({ theme }) => theme.soft};
   }
+
+  span {
+    @media (max-width: 768px) {
+      display: none;
+    }
+  }
 `;
 
 const Hr = styled.hr`
   margin: 15px 0px;
   border: 0.5px solid ${({ theme }) => theme.soft};
+
+  @media (max-width: 768px) {
+   display: none;
+  }
 `;
 
 const Login = styled.div`
-  padding: 10px 0; /* Added padding for better spacing */
+  padding: 10px 0; 
+
+  @media (max-width: 768px) {
+      display: none;
+    }
 `;
 const Button = styled.button`
   padding: 5px 15px;
@@ -85,10 +116,14 @@ const Title = styled.h2`
   font-weight: 500;
   color: #aaaaaa;
   margin-bottom: 20px;
+
+  @media (max-width: 768px) {
+    display: none;
+  }
 `;
 
 
-const Menu = ({darkMode, setDarkMode}) => {
+const Menu = ({ darkMode, setDarkMode }) => {
   const { currentUser } = useSelector(state => state.user);
 
   return (
@@ -96,51 +131,51 @@ const Menu = ({darkMode, setDarkMode}) => {
       <Wrapper>
         <Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
           <Logo>
-            <Img src={logo} alt="VideoTube Logo" /> 
-            VideoTube
+            <Img src={logo} alt="VideoTube Logo" />
+            <span>VideoTube</span>
           </Logo>
         </Link>
 
-        
+
         <Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
           <Item>
             <HomeOutlinedIcon />
-            Home
+            <span>Home</span>
           </Item>
         </Link>
         <Link to="trends" style={{ textDecoration: "none", color: "inherit" }}>
           <Item>
             <ExploreIcon />
-            Explore
+            <span>Explore</span>
           </Item>
         </Link>
 
-        
+
         {currentUser && (
           <Link to="subscriptions" style={{ textDecoration: "none", color: "inherit" }}>
             <Item>
               <SubscriptionsIcon />
-              Subscriptions
+              <span>Subscriptions</span>
             </Item>
           </Link>
         )}
 
         <Hr />
 
-        
+
         {currentUser ? (
           <>
             <Item>
               <VideoLibraryOutlinedIcon />
-              Library
+              <span>Library</span>
             </Item>
             <Item>
               <HistoryToggleOffOutlinedIcon />
-              History
+              <span>History</span>
             </Item>
           </>
         ) : (
-          
+
           <>
             <Login>
               Sign in to like videos, comment, and subscribe.
@@ -154,52 +189,52 @@ const Menu = ({darkMode, setDarkMode}) => {
           </>
         )}
         <Hr />
-        
-        
+
+
         <Title>Best of VideoTube</Title>
         <Item>
           <LibraryMusicOutlinedIcon />
-          Music
+          <span>Music</span>
         </Item>
         <Item>
           <SportsBasketballOutlinedIcon />
-          Sports
+          <span>Sports</span>
         </Item>
         <Item>
           <SportsEsportsOutlinedIcon />
-          Games
+          <span>Games</span>
         </Item>
         <Item>
           <MovieCreationOutlinedIcon />
-          Movies
+          <span>Movies</span>
         </Item>
         <Item>
           <NewspaperOutlinedIcon />
-          News
+          <span>News</span>
         </Item>
         <Item>
           <LiveTvOutlinedIcon />
-          Live
+          <span>Live</span>
         </Item>
         <Hr />
 
-        
+
         <Item>
           <SettingsOutlinedIcon />
-          Settings
+          <span>Settings</span>
         </Item>
         <Item>
           <OutlinedFlagRoundedIcon />
-          Report
+          <span>Report</span>
         </Item>
         <Item>
           <HelpOutlineOutlinedIcon />
-          Help
+          <span>Help</span>
         </Item>
-        
+
         <Item onClick={() => setDarkMode(!darkMode)}>
           <SettingsBrightnessOutlinedIcon />
-          {darkMode ? "Light" : "Dark"} Mode
+          <span>{darkMode ? "Light" : "Dark"} Mode</span>
         </Item>
       </Wrapper>
     </Container>
@@ -208,8 +243,8 @@ const Menu = ({darkMode, setDarkMode}) => {
 
 
 Menu.propTypes = {
-  darkMode: PropTypes.bool.isRequired, 
-  setDarkMode: PropTypes.func.isRequired, 
+  darkMode: PropTypes.bool.isRequired,
+  setDarkMode: PropTypes.func.isRequired,
 };
 
 

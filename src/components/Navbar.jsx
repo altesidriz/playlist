@@ -16,7 +16,7 @@ const Container = styled.div`
   top: 0;
   background-color: ${({ theme }) => theme.bgLighter};
   height: 56px;
-  z-index: 999; /* Ensure navbar is above other elements */
+  z-index: 999; 
 `;
 const Wrapper = styled.div`
   display: flex;
@@ -39,6 +39,11 @@ const Search = styled.div`
   border: 1px solid #ccc;
   border-radius: 3px;
   color: ${({ theme }) => theme.text};
+
+   @media (max-width: 480px) {
+    left: 5px;
+    right: auto;
+  }
 `;
 
 const Input = styled.input`
@@ -68,6 +73,14 @@ const User = styled.div`
   gap: 10px;
   font-weight: 500;
   color: ${({ theme }) => theme.text};
+
+  @media (max-width: 480px){
+    gap: 10px;
+    justify-content: end;
+    span{
+      display: none;
+    }
+  }
 `;
 
 const Avatar = styled.img`
@@ -79,9 +92,12 @@ const Avatar = styled.img`
 `;
 
 const LogoutButton = styled(Button)` 
-  gap: 5px;
   margin-left: 15px; 
   padding: 5px 10px;
+
+   @media (max-width: 480px){
+    margin-left: 0;
+  }
 `;
 
 
@@ -135,12 +151,12 @@ export const Navbar = () => {
                 alt={currentUser.name || "User Avatar"} 
                 title={currentUser.name}
               />
-              {currentUser.name}
+              <span>{currentUser.name}</span>
               
               {/* Logout Button */}
               <LogoutButton onClick={handleLogout} title="Logout">
                 <ExitToAppOutlinedIcon style={{ fontSize: "18px" }}/>
-                LOGOUT
+                <span>LOGOUT</span>
               </LogoutButton>
 
             </User>

@@ -32,7 +32,12 @@ const Title = styled.h1`
 const SubTitle = styled.h2`
   font-size: 20px;
   font-weight: 300;
-  margin-bottom: 10px; 
+  margin-bottom: 10px;
+  
+  @media (max-width: 480px){
+    /* display: none; */
+    font-size: 15px
+  }
 `;
 
 const Input = styled.input`
@@ -72,10 +77,20 @@ const More = styled.div`
   margin-top: 10px;
   font-size: 12px;
   color: ${({ theme }) => theme.textSoft};
+
+  @media (max-width: 480px){
+    height: 50px;
+    align-items: center;
+    justify-content:center;
+  }
 `;
 
 const Links = styled.div`
   margin-left: 50px;
+
+   @media (max-width: 480px){
+    margin-left: 0;
+  }
 `;
 
 const Link = styled.span`

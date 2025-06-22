@@ -5,38 +5,53 @@ import axios from "axios";
 import PropTypes from 'prop-types';
 
 const Container = styled.div`
+  padding: 16px;
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
+
+  @media (max-width: 768px) {
+    padding: 16px;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+
+  @media (max-width: 480px) {
+    padding: 16px;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
 `;
 
 
 
-const Home = ({type}) => {
+const Home = ({ type }) => {
   const [videos, setVideos] = useState([]);
-  const [loading, setLoading] = useState(true); 
-  const [error, setError] = useState(false);   
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     const fetchVideos = async () => {
-      setLoading(true); 
-      setError(false); 
+      setLoading(true);
+      setError(false);
       try {
         const res = await axios.get(`/api/videos/${type}`);
         setVideos(res.data);
       } catch (err) {
         console.error("Error fetching videos:", err);
-        setError(true); 
+        setError(true);
       } finally {
-        setLoading(false); 
+        setLoading(false);
       }
     };
     fetchVideos();
   }, [type]);
 
-  if (loading) return <p>Loading videos...</p>; 
-  if (error) return <p>Something went wrong. Could not load videos.</p>; 
-  if (videos.length === 0 && !loading && !error) return <p>No videos found.</p>; 
+  if (loading) return <p>Loading videos...</p>;
+  if (error) return <p>Something went wrong. Could not load videos.</p>;
+  if (videos.length === 0 && !loading && !error) return <p>No videos found.</p>;
 
   return (
     <Container>

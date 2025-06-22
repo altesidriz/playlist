@@ -11,7 +11,16 @@ const Container = styled.div`
   margin-bottom: ${(props) => (props.type === "sm" ? "10px" : "45px")};
   cursor: pointer;
   display: ${(props) => props.type === "sm" && "flex"};
+  flex-direction: ${(props) => props.type === "sm" ? "column" : ""};
   gap: 10px;
+
+  @media (max-width: 768px) {
+   width: 80%;
+  }
+
+  @media (max-width: 480px) {
+    width: 100%;
+  }
 `;
 
 const Image = styled.img`

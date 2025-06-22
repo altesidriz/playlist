@@ -34,7 +34,12 @@ const Wrapper = styled.div`
   flex-direction: column;
   gap: 20px;
   position: relative;
-  border-radius: 8px; 
+  border-radius: 8px;
+  
+  @media (max-width: 480px){
+    width: 85%;
+    height: auto;
+  }
 `;
 
 const Close = styled.div`
